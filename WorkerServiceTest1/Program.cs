@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WorkerServiceTest1.BLL;
 
 namespace WorkerServiceTest1
 {
@@ -16,8 +17,10 @@ namespace WorkerServiceTest1
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .UseWindowsService()
                 .ConfigureServices((hostContext, services) =>
                 {
+                    services.AddSingleton<IAddDatabase, AddDatabase>();
                     services.AddHostedService<Worker>();
                 });
     }
