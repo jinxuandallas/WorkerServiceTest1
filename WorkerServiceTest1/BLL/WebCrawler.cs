@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Net;
+using System.Net.Cache;
 
 namespace WorkerServiceTest1.BLL
 {
@@ -19,6 +20,8 @@ namespace WorkerServiceTest1.BLL
         {
             string strHTML = "";
             WebClient myWebClient = new WebClient();
+            myWebClient.Credentials = CredentialCache.DefaultCredentials;
+            myWebClient.Headers.Set("User-Agent", "Microsoft Internet Explorer");
             Stream myStream = myWebClient.OpenRead(url);
             StreamReader sr = new StreamReader(myStream, Encoding.Default);//注意编码
             strHTML = sr.ReadToEnd();

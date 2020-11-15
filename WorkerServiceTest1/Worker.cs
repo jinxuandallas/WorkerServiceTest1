@@ -27,7 +27,7 @@ namespace WorkerServiceTest1
             //_iad.dbOpen();
             //_logger.LogInformation("database open");
             //_iad.dbClose();
-            _iwc.SaveHtmlTxt(@"http://www.baidu.com");
+            _iwc.SaveHtmlTxt(@"https://www.steepandcheap.com/Store/catalog/search.jsp?s=u&q=arcteryx+men+alpha+sv");
             _logger.LogInformation("OK!");
             await base.StartAsync(cancellationToken);
         }
@@ -38,7 +38,7 @@ namespace WorkerServiceTest1
             {
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
                 _iad.AddOneRecord();
-                await Task.Delay(1000, stoppingToken);
+                await Task.Delay(new TimeSpan(0,0,10), stoppingToken);
             }
         }
 
