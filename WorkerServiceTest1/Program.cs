@@ -21,6 +21,7 @@ namespace WorkerServiceTest1
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddSingleton<IAddDatabase, AddDatabase>();
+                    services.AddSingleton<IWebCrawler, WebCrawler>();
                     services.AddHostedService<Worker>();
                 });
     }
