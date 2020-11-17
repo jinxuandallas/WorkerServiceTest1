@@ -34,7 +34,7 @@ namespace WorkerServiceTest1
 
             string html;
 
-            using (StreamReader sr = new StreamReader(@"c:\example.txt"))
+            using (StreamReader sr = new StreamReader(@"Example\example.txt"))
             {
                 html = sr.ReadToEnd();
             }

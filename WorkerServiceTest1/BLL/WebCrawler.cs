@@ -30,7 +30,7 @@ namespace WorkerServiceTest1.BLL
             strHTML = sr.ReadToEnd();
             myStream.Close();
 
-            File.WriteAllText(@"c:\example.txt", strHTML);
+            File.WriteAllText(@"Example\example.txt", strHTML);
             //return strHTML;
         }
 
