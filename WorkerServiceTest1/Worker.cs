@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using WorkerServiceTest1.BLL;
+using System.IO;
 
 namespace WorkerServiceTest1
 {
@@ -15,7 +16,7 @@ namespace WorkerServiceTest1
         private IAddDatabase _iad;
         private IWebCrawler _iwc;
 
-        public Worker(ILogger<Worker> logger,IAddDatabase iad,IWebCrawler iwc)
+        public Worker(ILogger<Worker> logger, IAddDatabase iad, IWebCrawler iwc)
         {
             _logger = logger;
             _iad = iad;
@@ -27,7 +28,22 @@ namespace WorkerServiceTest1
             //_iad.dbOpen();
             //_logger.LogInformation("database open");
             //_iad.dbClose();
-            _iwc.SaveHtmlTxt(@"https://www.steepandcheap.com/Store/catalog/search.jsp?s=u&q=arcteryx+men+alpha+sv");
+
+            //_iwc.SaveHtmlTxt(@"https://www.steepandcheap.com/Store/catalog/search.jsp?s=u&q=arcteryx+men+alpha+sv");
+            //_iwc.SaveHtmlTxt(@"https://www.steepandcheap.com/Store/catalog/search.jsp?s=u&q=sfdsfdsdfsd");
+
+            string html;
+
+            using (StreamReader sr = new StreamReader(@"c:\example.txt"))
+            {
+                html = sr.ReadToEnd();
+            }
+
+            string result = _iwc.CrawlSteepandCheap(html);
+
+            _logger.LogInformation(result);
+
+
             _logger.LogInformation("OK!");
             await base.StartAsync(cancellationToken);
         }
@@ -37,8 +53,8 @@ namespace WorkerServiceTest1
             while (!stoppingToken.IsCancellationRequested)
             {
                 _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-                _iad.AddOneRecord();
-                await Task.Delay(new TimeSpan(0,0,10), stoppingToken);
+                //_iad.AddOneRecord();
+                await Task.Delay(new TimeSpan(0, 0, 5), stoppingToken);
             }
         }
 

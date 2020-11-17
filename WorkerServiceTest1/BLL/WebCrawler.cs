@@ -6,12 +6,15 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Net;
 using System.Net.Cache;
+using HtmlAgilityPack;
+using System.Web;
 
 namespace WorkerServiceTest1.BLL
 {
     public interface IWebCrawler
     {
         void SaveHtmlTxt(string url);
+        string CrawlSteepandCheap(string html);
     }
 
     public class WebCrawler : IWebCrawler
@@ -29,6 +32,41 @@ namespace WorkerServiceTest1.BLL
 
             File.WriteAllText(@"c:\example.txt", strHTML);
             //return strHTML;
+        }
+
+        public string CrawlSteepandCheap(string html)
+        {
+            var doc = new HtmlDocument();
+            doc.LoadHtml(html);
+            HtmlNodeCollection liNodes = doc.DocumentNode.SelectNodes("//ul[contains(@class, 'ui-product-listing-grid')]/li");
+
+            if (liNodes == null)//如果关键词搜索不到任何商品
+                return "We couldn’t find any results";
+
+            string[] words = new string[] { "alpha", "sv", "men" };
+            HtmlNode targetNode = liNodes.FirstOrDefault(ln => ContainWords(words, ln.InnerText));
+
+            if (targetNode == null)//如果找不到符合条件的产品
+                return "No qualified products";
+
+            HtmlNode globalText = doc.DocumentNode.SelectSingleNode("//button[contains(@class,'global-text')]");
+            if (globalText == null)
+                return "No globaltext";
+
+            //HtmlNode s = globalText.SelectSingleNode("./span");
+            //return s.InnerText;
+            //System.Web.HttpUtility.HtmlDecode
+            return HttpUtility.HtmlDecode(globalText.InnerText);
+
+            //return targetNode.InnerText;
+        }
+
+        private bool ContainWords(string[] words, string s)
+        {
+            foreach (string w in words)
+                if (!s.ToLower().Contains(w.ToLower()))
+                    return false;
+            return true;
         }
     }
 }
