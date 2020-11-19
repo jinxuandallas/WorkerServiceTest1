@@ -49,16 +49,23 @@ namespace WorkerServiceTest1.BLL
             if (targetNode == null)//如果找不到符合条件的产品
                 return "No qualified products";
 
+            AddKeyword(words);
+
             HtmlNode globalText = doc.DocumentNode.SelectSingleNode("//button[contains(@class,'global-text')]");
-            if (globalText == null)
-                return "No globaltext";
+            //if (globalText == null)
+            //    return "No globaltext";
 
             //HtmlNode s = globalText.SelectSingleNode("./span");
             //return s.InnerText;
             //System.Web.HttpUtility.HtmlDecode
-            return HttpUtility.HtmlDecode(globalText.InnerText);
+            //return HttpUtility.HtmlDecode(globalText.InnerText);
 
-            //return targetNode.InnerText;
+            return targetNode.InnerText;
+        }
+
+        private void AddKeyword(string[] keywords)
+        {
+            string keyword = string.Join(' ', keywords);
         }
 
         private bool ContainWords(string[] words, string s)
