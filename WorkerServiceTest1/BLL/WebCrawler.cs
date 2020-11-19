@@ -8,6 +8,11 @@ using System.Net;
 using System.Net.Cache;
 using HtmlAgilityPack;
 using System.Web;
+using MySql.Data;
+using MySql.Data.MySqlClient;
+using Dapper;
+using System.Data;
+using WorkerServiceTest1.Model;
 
 namespace WorkerServiceTest1.BLL
 {
@@ -19,6 +24,13 @@ namespace WorkerServiceTest1.BLL
 
     public class WebCrawler : IWebCrawler
     {
+        public static string connectionString = @"Server=localhost;Port=3306;Database=shoppingcrawler;Uid=root;Pwd=123456;";
+        public IDbConnection db;
+
+        public WebCrawler()
+        {
+        }
+
         public void SaveHtmlTxt(string url)
         {
             string strHTML = "";
@@ -49,7 +61,8 @@ namespace WorkerServiceTest1.BLL
             if (targetNode == null)//如果找不到符合条件的产品
                 return "No qualified products";
 
-            AddKeyword(words);
+            Product product = new Product();
+            product.Keyword= AddKeyword(words);
 
             HtmlNode globalText = doc.DocumentNode.SelectSingleNode("//button[contains(@class,'global-text')]");
             //if (globalText == null)
@@ -60,12 +73,21 @@ namespace WorkerServiceTest1.BLL
             //System.Web.HttpUtility.HtmlDecode
             //return HttpUtility.HtmlDecode(globalText.InnerText);
 
-            return targetNode.InnerText;
+            //return targetNode.InnerText;
+            return product.Keyword.ToString();
         }
 
-        private void AddKeyword(string[] keywords)
+        private int AddKeyword(string[] keywords)
         {
             string keyword = string.Join(' ', keywords);
+            using (db = new MySqlConnection(connectionString))
+            {
+                var param = new DynamicParameters();
+                param.Add("@keyword", keyword);
+                param.Add("@keywordid", 0, DbType.Int32, ParameterDirection.Output);
+                var res = db.Execute("Add_keyword", param, null, null, CommandType.StoredProcedure);
+                return int.Parse(param.Get<object>("@keywordid").ToString());
+            }
         }
 
         private bool ContainWords(string[] words, string s)
