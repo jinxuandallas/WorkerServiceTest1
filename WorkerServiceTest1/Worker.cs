@@ -13,13 +13,13 @@ namespace WorkerServiceTest1
     public class Worker : BackgroundService
     {
         private readonly ILogger<Worker> _logger;
-        private IAddDatabase _iad;
+        //private IAddDatabase _iad;
         private IWebCrawler _iwc;
 
-        public Worker(ILogger<Worker> logger, IAddDatabase iad, IWebCrawler iwc)
+        public Worker(ILogger<Worker> logger, IWebCrawler iwc)
         {
             _logger = logger;
-            _iad = iad;
+            //_iad = iad;
             _iwc = iwc;
         }
 
@@ -34,7 +34,7 @@ namespace WorkerServiceTest1
 
             string html;
 
-            using (StreamReader sr = new StreamReader(@"Example\example1.txt"))
+            using (StreamReader sr = new StreamReader(@"Example\example.txt"))
             {
                 html = sr.ReadToEnd();
             }

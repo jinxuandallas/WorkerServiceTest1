@@ -24,11 +24,14 @@ namespace WorkerServiceTest1.BLL
 
     public class WebCrawler : IWebCrawler
     {
-        public static string connectionString = @"Server=localhost;Port=3306;Database=shoppingcrawler;Uid=root;Pwd=123456;";
-        public IDbConnection db;
+        //public static string connectionString = @"Server=localhost;Port=3306;Database=shoppingcrawler;Uid=root;Pwd=123456;";
+        //public IDbConnection db;
 
-        public WebCrawler()
+        public IAddDatabase _iad;
+
+        public WebCrawler(IAddDatabase iad)
         {
+            _iad = iad;
         }
 
         public void SaveHtmlTxt(string url)
@@ -62,33 +65,36 @@ namespace WorkerServiceTest1.BLL
                 return "No qualified products";
 
             Product product = new Product();
-            product.Keyword= AddKeyword(words);
+            product.Keyword= _iad.AddKeyword(words);
 
             HtmlNode globalText = doc.DocumentNode.SelectSingleNode("//button[contains(@class,'global-text')]");
-            //if (globalText == null)
+            if (globalText != null)
+                product.GlobalText = HttpUtility.HtmlDecode(globalText.InnerText).Trim();
+
+            _iad.AddProduct(product);
             //    return "No globaltext";
 
-            //HtmlNode s = globalText.SelectSingleNode("./span");
-            //return s.InnerText;
-            //System.Web.HttpUtility.HtmlDecode
-            //return HttpUtility.HtmlDecode(globalText.InnerText);
+                //HtmlNode s = globalText.SelectSingleNode("./span");
+                //return s.InnerText;
+                //System.Web.HttpUtility.HtmlDecode
+                //return HttpUtility.HtmlDecode(globalText.InnerText);
 
-            //return targetNode.InnerText;
+                //return targetNode.InnerText;
             return product.Keyword.ToString();
         }
 
-        private int AddKeyword(string[] keywords)
-        {
-            string keyword = string.Join(' ', keywords);
-            using (db = new MySqlConnection(connectionString))
-            {
-                var param = new DynamicParameters();
-                param.Add("@keyword", keyword);
-                param.Add("@keywordid", 0, DbType.Int32, ParameterDirection.Output);
-                var res = db.Execute("Add_keyword", param, null, null, CommandType.StoredProcedure);
-                return int.Parse(param.Get<object>("@keywordid").ToString());
-            }
-        }
+        //private int AddKeyword(string[] keywords)
+        //{
+        //    string keyword = string.Join(' ', keywords);
+        //    using (db = new MySqlConnection(connectionString))
+        //    {
+        //        var param = new DynamicParameters();
+        //        param.Add("@keyword", keyword);
+        //        param.Add("@keywordid", 0, DbType.Int32, ParameterDirection.Output);
+        //        var res = db.Execute("Add_keyword", param, null, null, CommandType.StoredProcedure);
+        //        return int.Parse(param.Get<object>("@keywordid").ToString());
+        //    }
+        //}
 
         private bool ContainWords(string[] words, string s)
         {

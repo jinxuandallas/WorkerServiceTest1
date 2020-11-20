@@ -8,6 +8,8 @@ namespace WorkerServiceTest1.Model
 {
     public class Product
     {
+        public Guid id { get; set; }
         public int Keyword { get; set; }
+        public string GlobalText { get; set; } = null;
     }
 }
